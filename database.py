@@ -8,7 +8,6 @@ def load_data():
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     else:
-        # баштапкы маалыматтар
         from config import DEFAULT_DATA
         save_data(DEFAULT_DATA)
         return DEFAULT_DATA
