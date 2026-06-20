@@ -3,17 +3,11 @@ import random
 import os
 import logging
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, FSInputFile, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
-
-# ЭСКЕРТҮҮ: Бул импортту өзгөртүү КЕРЕК
-try:
-    from aiogram.enums import ChatMemberStatus
-except ImportError:
-    from aiogram.types import ChatMemberStatus
 
 from config import BOT_TOKEN, ADMIN_ID, CHANNEL_USERNAME, CHANNEL_URL, MINES_DIR
 import database as db
@@ -32,12 +26,12 @@ def main_keyboard():
 
 def games_keyboard():
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    kb.add(KeyboardButton("✈️ Lucky Jet"), KeyboardButton("💣 Mines"), KeyboardButton("🐔 Chicken Road"), KeyboardButton("🎲 Башка оюндар"), KeyboardButton("⬅️ Артка"))
+    kb.add(KeyboardButton("✈️ Lucky Jet"), KeyboardButton("💣 Mines"), KeyboardButton("🐔 Chicken Road"), KeyboardButton("⬅️ Артка"))
     return kb
 
 def bonuses_keyboard():
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    kb.add(KeyboardButton("🔴 1Win"), KeyboardButton("🟡 Mostbet"), KeyboardButton("🔵 Melbet"), KeyboardButton("🟣 1xBet"), KeyboardButton("⬅️ Артка"))
+    kb.add(KeyboardButton("🔴 1Win"), KeyboardButton("🟡 Mostbet"), KeyboardButton("⬅️ Артка"))
     return kb
 
 def support_keyboard():
@@ -47,7 +41,7 @@ def support_keyboard():
 
 def admin_keyboard():
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    kb.add(KeyboardButton("📎 1Win шилтеме"), KeyboardButton("📎 Mostbet шилтеме"), KeyboardButton("📎 Melbet шилтеме"), KeyboardButton("📎 1xBet шилтеме"), KeyboardButton("📝 Промокод өзгөртүү"), KeyboardButton("📸 Каналга сүрөт жөнөтүү"), KeyboardButton("⬅️ Артка"))
+    kb.add(KeyboardButton("📎 1Win шилтеме"), KeyboardButton("📎 Mostbet шилтеме"), KeyboardButton("📝 Промокод өзгөртүү"), KeyboardButton("📸 Каналга сүрөт жөнөтүү"), KeyboardButton("⬅️ Артка"))
     return kb
 
 def refresh_keyboard():
@@ -55,19 +49,22 @@ def refresh_keyboard():
     kb.add(InlineKeyboardButton("🔄 Жаңы прогноз", callback_data="new_prediction"))
     return kb
 
+# -------------------- ПРОВЕРКА ПОДПИСКИ --------------------
 async def is_subscribed(user_id: int) -> bool:
     try:
         member = await bot.get_chat_member(chat_id=CHANNEL_USERNAME, user_id=user_id)
-        return member.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]
+        return member.status in ["member", "administrator", "creator"]
     except:
         return False
 
+# -------------------- FSM ДЛЯ АДМИНА --------------------
 class AdminStates(StatesGroup):
     waiting_for_link = State()
     waiting_for_promocode = State()
     waiting_for_channel_photo = State()
     waiting_for_channel_text = State()
 
+# -------------------- ХЕНДЛЕРЛЕР --------------------
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
     user_id = message.from_user.id
@@ -95,10 +92,6 @@ async def back_to_main(message: Message):
 @dp.message(lambda msg: msg.text == "🎰 Прогноздор")
 async def show_games(message: Message):
     await message.answer("Кайсы оюнга прогноз алгыңыз келет?", reply_markup=games_keyboard())
-
-@dp.message(lambda msg: msg.text == "🎲 Башка оюндар")
-async def other_games(message: Message):
-    await message.answer("⏳ Бул оюндар азырынча кошула элек. Башкасын тандаңыз!", reply_markup=games_keyboard())
 
 async def show_analysis_and_prediction(message: Message, game_type: str, prediction_text: str, photo_path: str = None):
     loading_msg = await message.answer("🔍 Анализ жүрүп жатат... 10 секунд күтө туруңуз... 🔍")
@@ -188,10 +181,6 @@ async def admin_change_link(message: Message, state: FSMContext):
         key = "1win"
     elif "Mostbet" in message.text:
         key = "mostbet"
-    elif "Melbet" in message.text:
-        key = "melbet"
-    elif "1xBet" in message.text:
-        key = "1xbet"
     else:
         await message.answer("Туура эмес баскыч.")
         return
@@ -272,6 +261,3 @@ async def main():
         print(f"⚠️ {MINES_DIR} папкасы түзүлдү. 8 сүрөт салыңыз.")
     print("🤖 Бот иштеп жатат...")
     await dp.start_polling(bot)
-
-if __name__ == "__main__":
-    asyncio.run(main())
