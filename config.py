@@ -1,4 +1,4 @@
-BOT_TOKEN = "fhrh"
+BOT_TOKEN = "8941229692:AAF5-o5CNDmC-h3yBjq6eRTldEv1Ic81SXQ"
 ADMIN_ID = 6954551561
 CHANNEL_USERNAME = "@profixkg"
 CHANNEL_URL = "https://t.me/profixkg"
