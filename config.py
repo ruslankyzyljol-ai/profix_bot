@@ -1,5 +1,8 @@
-BOT_TOKEN = "8941229692:AAF5-o5CNDmC-h3yBjq6eRTldEv1Ic81SXQ"
-ADMIN_ID = 6954551561
+import os
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+ADMIN_ID = int(os.environ.get("ADMIN_ID", "6954551561"))
+CHANNEL_USERNAME = "@profixkg"
+CHANNEL_URL = "https://t.me/profixkg"
 CHANNEL_USERNAME = "@profixkg"
 CHANNEL_URL = "https://t.me/profixkg"
 MINES_DIR = "images"
