@@ -1,10 +1,11 @@
 import os
+
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
-ADMIN_ID = int(os.environ.get("ADMIN_ID")
+ADMIN_ID = int(os.environ.get("ADMIN_ID"))
+
 CHANNEL_USERNAME = "@profixkg"
 CHANNEL_URL = "https://t.me/profixkg"
-CHANNEL_USERNAME = "@profixkg"
-CHANNEL_URL = "https://t.me/profixkg"
+
 MINES_DIR = "images"
 
 LINKS = {
